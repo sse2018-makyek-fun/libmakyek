@@ -1,0 +1,14 @@
+{
+  "name": "libreversi",
+  "version": "1.0.0",
+  "description": "Utility library for reversi",
+  "main": "index.js",
+  "author": "Breezewish",
+  "license": "MIT",
+  "scripts": {
+    "test": "ava"
+  },
+  "devDependencies": {
+    "ava": "^0.23.0"
+  }
+}
