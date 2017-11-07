@@ -75,7 +75,7 @@ const charSideMap = {
   'o': 2,
 };
 
-for (let testCaseSrc in testCases) {
+for (const testCaseSrc in testCases) {
   const expectedResult = testCases[testCaseSrc];
   test(`HasPlacementJudger ${testCaseSrc}`, t => {
     const judger = new HasPlacementJudger(1);

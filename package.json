@@ -6,9 +6,17 @@
   "author": "Breezewish",
   "license": "MIT",
   "scripts": {
-    "test": "ava"
+    "test": "xo && ava"
   },
   "devDependencies": {
-    "ava": "^0.23.0"
+    "ava": "^0.23.0",
+    "xo": "^0.18.2"
+  },
+  "xo": {
+    "space": 2,
+    "rules": {
+      "no-var": "warn",
+      "comma-dangle": ["error", "always-multiline"]
+    }
   }
 }
