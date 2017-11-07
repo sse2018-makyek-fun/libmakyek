@@ -19,18 +19,27 @@ function ReversiBoard(size, onUpdate) {
  */
 ReversiBoard.prototype.clearBoard = function () {
   this.board = [];
+  this.order = [];
   for (var i = 0; i < this.size; i++) {
-    var row = [];
+    var boardRow = [];
+    var orderRow = [];
     for (var j = 0; j < this.size; j++) {
-      row.push(constant.STATE_EMPTY);
+      boardRow.push(constant.STATE_EMPTY);
+      orderRow.push(0);
     }
-    this.board.push(row);
+    this.board.push(boardRow);
+    this.order.push(orderRow);
   }
   var beginPos = this.size / 2 - 1;
   this.board[beginPos][beginPos] = constant.STATE_BLACK;
   this.board[beginPos][beginPos + 1] = constant.STATE_WHITE;
   this.board[beginPos + 1][beginPos] = constant.STATE_WHITE;
   this.board[beginPos + 1][beginPos + 1] = constant.STATE_BLACK;
+  this.order[beginPos][beginPos] = 0;
+  this.order[beginPos][beginPos + 1] = 0;
+  this.order[beginPos + 1][beginPos] = 0;
+  this.order[beginPos + 1][beginPos + 1] = 0;
+  this.currentOrder = 0;
 };
 
 /**
@@ -56,7 +65,7 @@ ReversiBoard.prototype.hasAvailablePlacement = function (side) {
     while (row >= 0 && col >= 0 && row < this.size && col < this.size) {
       var cRow = row;
       var cCol = col;
-      // asc order
+      // Asc order
       judger.reset();
       while (cRow >= 0 && cCol >= 0 && cRow < this.size && cCol < this.size) {
         var result = judger.next(this.board[cRow][cCol]);
@@ -66,7 +75,7 @@ ReversiBoard.prototype.hasAvailablePlacement = function (side) {
         cRow += iteration[2];
         cCol += iteration[3];
       }
-      // desc order
+      // Desc order
       cRow -= iteration[2];
       cCol -= iteration[3];
       judger.reset();
@@ -78,7 +87,7 @@ ReversiBoard.prototype.hasAvailablePlacement = function (side) {
         cRow -= iteration[2];
         cCol -= iteration[3];
       }
-      // prepare for next iteration
+      // Prepare for next iteration
       row += iteration[4];
       col += iteration[5];
     }
@@ -110,7 +119,7 @@ ReversiBoard.prototype.canPlaceAt = function (side, row, col) {
       } else if (result > 0) {
         return true;
       }
-      // else: result === -1
+      // Else: result === -1
       cRow += direction[0];
       cCol += direction[1];
     }
@@ -118,9 +127,10 @@ ReversiBoard.prototype.canPlaceAt = function (side, row, col) {
   return false;
 };
 
-ReversiBoard.prototype._placeAt = function (side, row, col) {
+ReversiBoard.prototype._placeAt = function (row, col, side, order) {
   this.board[row][col] = side;
-  this.fnOnUpdate && this.fnOnUpdate(side, row, col);
+  this.order[row][col] = order;
+  this.fnOnUpdate && this.fnOnUpdate(row, col, side, order);
 };
 
 /**
@@ -131,14 +141,15 @@ ReversiBoard.prototype._placeAt = function (side, row, col) {
  */
 ReversiBoard.prototype.placeAt = function (side, row, col) {
   validation.checkPlayerSide(side);
-  this._placeAt(side, row, col);
+  this.currentOrder++;
+  this._placeAt(row, col, side, this.currentOrder);
   var judger = new StoneFlipJudger(side);
   for (var i = 0; i < RAD_DIRECTIONS.length; i++) {
     var direction = RAD_DIRECTIONS[i];
-    // pre-walk to see how many stones can be flipped
+    // Pre-walk to see how many stones can be flipped
+    var flipStones = 0;
     var cRow = row + direction[0];
     var cCol = col + direction[1];
-    var flipStones = 0;
     judger.reset();
     while (cRow >= 0 && cCol >= 0 && cRow < this.size && cCol < this.size) {
       var result = judger.next(this.board[cRow][cCol]);
@@ -154,13 +165,29 @@ ReversiBoard.prototype.placeAt = function (side, row, col) {
       var cRow = row + direction[0];
       var cCol = col + direction[1];
       while (flipStones > 0) {
-        this._placeAt(side, cRow, cCol);
+        this._placeAt(cRow, cCol, side, this.currentOrder);
         flipStones--;
         cRow += direction[0];
         cCol += direction[1];
       }
     }
   }
+};
+
+/**
+ * Count stones.
+ */
+ReversiBoard.prototype.count = function () {
+  var analytics = {};
+  analytics[constant.STATE_EMPTY] = 0;
+  analytics[constant.STATE_BLACK] = 0;
+  analytics[constant.STATE_WHITE] = 0;
+  for (var i = 0; i < this.size; i++) {
+    for (var j = 0; j < this.size; j++) {
+      analytics[this.board[i][j]]++;
+    }
+  }
+  return analytics;
 };
 
 module.exports = {
