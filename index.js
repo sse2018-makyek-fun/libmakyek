@@ -129,7 +129,9 @@ ReversiBoard.prototype.canPlaceAt = function (side, row, col) {
 
 ReversiBoard.prototype._placeAt = function (row, col, side, order) {
   this.board[row][col] = side;
-  this.order[row][col] = order;
+  if (order !== undefined) {
+    this.order[row][col] = order;
+  }
   this.fnOnUpdate && this.fnOnUpdate(row, col, side, order);
 };
 
@@ -162,13 +164,13 @@ ReversiBoard.prototype.placeAt = function (side, row, col) {
     }
     // flip stones
     if (flipStones > 0) {
-      var cRow = row + direction[0];
-      var cCol = col + direction[1];
+      var cRow = row;
+      var cCol = col;
       while (flipStones > 0) {
-        this._placeAt(cRow, cCol, side, this.currentOrder);
-        flipStones--;
         cRow += direction[0];
         cCol += direction[1];
+        this._placeAt(cRow, cCol, side);
+        flipStones--;
       }
     }
   }
