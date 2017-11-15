@@ -31,10 +31,10 @@ ReversiBoard.prototype.clearBoard = function () {
     this.order.push(orderRow);
   }
   var beginPos = this.size / 2 - 1;
-  this.board[beginPos][beginPos] = constant.STATE_BLACK;
-  this.board[beginPos][beginPos + 1] = constant.STATE_WHITE;
-  this.board[beginPos + 1][beginPos] = constant.STATE_WHITE;
-  this.board[beginPos + 1][beginPos + 1] = constant.STATE_BLACK;
+  this.board[beginPos][beginPos] = constant.STATE_WHITE;
+  this.board[beginPos][beginPos + 1] = constant.STATE_BLACK;
+  this.board[beginPos + 1][beginPos] = constant.STATE_BLACK;
+  this.board[beginPos + 1][beginPos + 1] = constant.STATE_WHITE;
   this.order[beginPos][beginPos] = 0;
   this.order[beginPos][beginPos + 1] = 0;
   this.order[beginPos + 1][beginPos] = 0;
