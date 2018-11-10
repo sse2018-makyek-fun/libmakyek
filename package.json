@@ -16,7 +16,10 @@
     "space": 2,
     "rules": {
       "no-var": "warn",
-      "comma-dangle": ["error", "always-multiline"]
+      "comma-dangle": [
+        "error",
+        "always-multiline"
+      ]
     }
   }
 }
