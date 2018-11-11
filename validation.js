@@ -9,7 +9,9 @@ module.exports = {
 
   checkPlayerOption(option) {
     if (option !== constant.OPTION_UP && option !== constant.OPTION_DOWN &&
-      option !== constant.OPTION_LEFT && option !== constant.OPTION_RIGHT) {
+      option !== constant.OPTION_LEFT && option !== constant.OPTION_RIGHT &&
+      option !== constant.OPTION_UP_LEFT && option !== constant.OPTION_UP_RIGHT &&
+      option !== constant.OPTION_DOWN_LEFT && option !== constant.OPTION_DOWN_RIGHT) {
       throw new Error('invalid playerOption');
     }
   },

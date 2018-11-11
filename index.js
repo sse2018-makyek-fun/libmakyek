@@ -1,7 +1,7 @@
 const constant = require('./constant');
 const validation = require('./validation');
 
-const DIRECTIONS = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+const DIRECTIONS = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
 
 function MakyekBoard(size, onUpdate) {
   if (size % 2 !== 0 || size <= 0) {
@@ -25,11 +25,12 @@ MakyekBoard.prototype.clearBoard = function () {
     this.board.push(boardRow);
   }
 
-  for (let i = 0; i < this.size; i++) {
-    this.board[0][i] = constant.STATE_WHITE;
+  const halfSize = this.size / 2;
+  for (let i = 0; i < halfSize; i++) {
     this.board[2][i] = constant.STATE_WHITE;
-    this.board[this.size - 1][i] = constant.STATE_BLACK;
-    this.board[this.size - 3][i] = constant.STATE_BLACK;
+    this.board[3][halfSize + i] = constant.STATE_WHITE;
+    this.board[4][i] = constant.STATE_BLACK;
+    this.board[5][halfSize + i] = constant.STATE_BLACK;
   }
 };
 
@@ -46,7 +47,7 @@ MakyekBoard.prototype.inBound = function (x, y) {
 MakyekBoard.prototype.hasAvailablePlacement = function (side) {
   validation.checkPlayerSide(side);
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 8; i++) {
     for (let x = 0; x < this.size; x++) {
       for (let y = 0; y < this.size; y++) {
         if (this.board[x][y] !== side) {

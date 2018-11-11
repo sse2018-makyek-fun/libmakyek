@@ -21,14 +21,14 @@ function transformVisualBoard(visualBoard) {
 
 test('constructor', t => {
   const visualBoard = [
-    'XXXXXXXX',
-    '........',
-    'XXXXXXXX',
     '........',
     '........',
-    'OOOOOOOO',
+    'XXXX....',
+    '....XXXX',
+    'OOOO....',
+    '....OOOO',
     '........',
-    'OOOOOOOO',
+    '........',
   ];
   const realBoard = transformVisualBoard(visualBoard);
   const board = new makyek.Board(8);
@@ -45,100 +45,124 @@ test('inBound', t => {
   t.is(board.inBound(0, 0), true);
 });
 
-test('hasAvailablePlacement1', t => {
-  const board = new makyek.Board(8);
-  const visualBoard = [
-    'XXXXXXXX',
-    '........',
-    'XXXXXXXX',
-    '........',
-    '........',
-    'OOOOOOOO',
-    '........',
-    'OOOOOOOO',
-  ];
-  board.board = transformVisualBoard(visualBoard);
-  t.is(board.hasAvailablePlacement(makyek.STATE_BLACK), true);
+const hasAvailablePlacementTestCases = [
+  {
+    board: [
+      '........',
+      '........',
+      'XXXX....',
+      '....XXXX',
+      'OOOO....',
+      '....OOOO',
+      '........',
+      '........',
+    ],
+    side: makyek.STATE_BLACK,
+    result: true,
+  },
+  {
+    board: [
+      '........',
+      '........',
+      '........',
+      '........',
+      '........',
+      'XXXX....',
+      'OOOOXXXX',
+      'XXXXXXXX',
+    ],
+    side: makyek.STATE_BLACK,
+    result: true,
+  },
+  {
+    board: [
+      '........',
+      '........',
+      '........',
+      '........',
+      '........',
+      'XXXXX...',
+      'OOOOXXXX',
+      'XXXXXXXX',
+    ],
+    side: makyek.STATE_BLACK,
+    result: false,
+  },
+];
+
+hasAvailablePlacementTestCases.forEach((item, id) => {
+  test(`hasAvailablePlacement${id}`, t => {
+    const board = new makyek.Board(8);
+    board.board = transformVisualBoard(item.board);
+    t.is(board.hasAvailablePlacement(item.side), item.result);
+  });
 });
 
-test('hasAvailablePlacement2', t => {
-  const board = new makyek.Board(8);
-  const visualBoard = [
-    'XXXXXXXX',
-    'XXXXXXXX',
-    'OOOOOOOO',
-    '........',
-    '........',
-    '........',
-    '........',
-    'OOOOOOOO',
-  ];
-  board.board = transformVisualBoard(visualBoard);
-  t.is(board.hasAvailablePlacement(makyek.STATE_WHITE), false);
-});
+const canPlaceAtTeestCases = [
+  {
+    board: [
+      'XXXXXXXX',
+      'XXXXXXXX',
+      'OOOOOOOO',
+      '........',
+      '........',
+      '........',
+      '........',
+      'OOOOOOOO',
+    ],
+    command: [makyek.STATE_WHITE, 0, 0, 1],
+    result: false,
+  },
+  {
+    board: [
+      'XXXXXXXX',
+      'XXXXXXXX',
+      'OOOOOOOO',
+      '........',
+      '........',
+      '........',
+      '........',
+      'OOOOOOOO',
+    ],
+    command: [makyek.STATE_BLACK, 0, 0, 1],
+    result: false,
+  },
+  {
+    board: [
+      'XXXXXXXX',
+      'XXXXXXXX',
+      'OOOOOOOO',
+      '........',
+      '........',
+      '........',
+      '........',
+      'OOOOOOOO',
+    ],
+    command: [makyek.STATE_BLACK, 7, 0, 3],
+    result: false,
+  },
+  {
+    board: [
+      'XXXXXXXX',
+      'XXXXXXXX',
+      'OOOOOOOO',
+      '........',
+      '........',
+      '........',
+      '........',
+      'OOOOOOOO',
+    ],
+    command: [makyek.STATE_BLACK, 7, 0, 0],
+    result: true,
+  },
+];
 
-test('canPlaceAt1', t => {
-  const board = new makyek.Board(8);
-  const visualBoard = [
-    'XXXXXXXX',
-    'XXXXXXXX',
-    'OOOOOOOO',
-    '........',
-    '........',
-    '........',
-    '........',
-    'OOOOOOOO',
-  ];
-  board.board = transformVisualBoard(visualBoard);
-  t.is(board.canPlaceAt(makyek.STATE_WHITE, 0, 0, 1), false);
-});
-
-test('canPlaceAt2', t => {
-  const board = new makyek.Board(8);
-  const visualBoard = [
-    'XXXXXXXX',
-    'XXXXXXXX',
-    'OOOOOOOO',
-    '........',
-    '........',
-    '........',
-    '........',
-    'OOOOOOOO',
-  ];
-  board.board = transformVisualBoard(visualBoard);
-  t.is(board.canPlaceAt(makyek.STATE_BLACK, 0, 0, 1), false);
-});
-
-test('canPlaceAt3', t => {
-  const board = new makyek.Board(8);
-  const visualBoard = [
-    'XXXXXXXX',
-    'XXXXXXXX',
-    'OOOOOOOO',
-    '........',
-    '........',
-    '........',
-    '........',
-    'OOOOOOOO',
-  ];
-  board.board = transformVisualBoard(visualBoard);
-  t.is(board.canPlaceAt(makyek.STATE_BLACK, 7, 0, 3), false);
-});
-
-test('canPlaceAt4', t => {
-  const board = new makyek.Board(8);
-  const visualBoard = [
-    'XXXXXXXX',
-    'XXXXXXXX',
-    'OOOOOOOO',
-    '........',
-    '........',
-    '........',
-    '........',
-    'OOOOOOOO',
-  ];
-  board.board = transformVisualBoard(visualBoard);
-  t.is(board.canPlaceAt(makyek.STATE_BLACK, 7, 0, 0), true);
+canPlaceAtTeestCases.forEach((item, id) => {
+  test(`canPlaceAt${id}`, t => {
+    const board = new makyek.Board(8);
+    board.board = transformVisualBoard(item.board);
+    t.is(board.canPlaceAt(...item.command), item.result);
+  });
 });
 
 const placeAtTestCases = [
@@ -233,6 +257,29 @@ const placeAtTestCases = [
       'OOOOOOOO',
     ],
     command: [makyek.STATE_WHITE, 1, 3, 2],
+  },
+  {
+    beforeBoard: [
+      'O.O.....',
+      '..X.....',
+      '........',
+      '........',
+      '........',
+      '........',
+      '........',
+      'OOOOOOOO',
+    ],
+    afterBoard: [
+      'XXX.....',
+      '........',
+      '........',
+      '........',
+      '........',
+      '........',
+      '........',
+      'OOOOOOOO',
+    ],
+    command: [makyek.STATE_WHITE, 1, 2, 4],
   },
 ];
 
