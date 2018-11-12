@@ -23,10 +23,10 @@ test('constructor', t => {
   const visualBoard = [
     '........',
     '........',
+    '..XXXX..',
     'XXXX....',
-    '....XXXX',
-    'OOOO....',
     '....OOOO',
+    '..OOOO..',
     '........',
     '........',
   ];

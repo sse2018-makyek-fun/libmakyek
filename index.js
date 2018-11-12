@@ -27,10 +27,10 @@ MakyekBoard.prototype.clearBoard = function () {
 
   const halfSize = this.size / 2;
   for (let i = 0; i < halfSize; i++) {
-    this.board[2][i] = constant.STATE_WHITE;
-    this.board[3][halfSize + i] = constant.STATE_WHITE;
-    this.board[4][i] = constant.STATE_BLACK;
-    this.board[5][halfSize + i] = constant.STATE_BLACK;
+    this.board[2][i + 2] = constant.STATE_WHITE;
+    this.board[3][i] = constant.STATE_WHITE;
+    this.board[4][i + halfSize] = constant.STATE_BLACK;
+    this.board[5][i + 2] = constant.STATE_BLACK;
   }
 };
 
