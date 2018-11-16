@@ -104,8 +104,8 @@ MakyekBoard.prototype.placeAt = function (side, x, y, option) {
   const otherSide = this.getOtherSide(side);
 
   // Intervention
-  const interventionDir = [[1, 0], [0, 1]];
-  for (let i = 0; i < 2; i++) {
+  const interventionDir = [[1, 0], [0, 1], [1, 1], [1, -1]];
+  for (let i = 0; i < interventionDir.length; i++) {
     const x1 = newX + interventionDir[i][0];
     const y1 = newY + interventionDir[i][1];
     const x2 = newX - interventionDir[i][0];
@@ -118,8 +118,8 @@ MakyekBoard.prototype.placeAt = function (side, x, y, option) {
   }
 
   // Custodian
-  const custodianDir = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-  for (let i = 0; i < 4; i++) {
+  const custodianDir = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+  for (let i = 0; i < custodianDir.length; i++) {
     const x1 = newX + custodianDir[i][0];
     const y1 = newY + custodianDir[i][1];
     const x2 = newX + (custodianDir[i][0] * 2);
