@@ -3,11 +3,8 @@ const validation = require('./validation');
 
 const DIRECTIONS = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
 
-function MakyekBoard(size, onUpdate) {
-  if (size % 2 !== 0 || size <= 0) {
-    throw new Error('invalid size');
-  }
-  this.size = size;
+function MakyekBoard(onUpdate) {
+  this.size = 12;
   this.fnOnUpdate = onUpdate;
   this.clearBoard();
 }
@@ -25,12 +22,15 @@ MakyekBoard.prototype.clearBoard = function () {
     this.board.push(boardRow);
   }
 
-  const halfSize = this.size / 2;
-  for (let i = 0; i < halfSize; i++) {
-    this.board[2][i + 2] = constant.STATE_WHITE;
-    this.board[3][i] = constant.STATE_WHITE;
-    this.board[4][i + halfSize] = constant.STATE_BLACK;
-    this.board[5][i + 2] = constant.STATE_BLACK;
+  for (let i = 0; i < 3; i++) {
+    this.board[2][2 + i] = constant.STATE_WHITE;
+    this.board[6][6 + i] = constant.STATE_WHITE;
+    this.board[5][3 + i] = constant.STATE_BLACK;
+    this.board[9][7 + i] = constant.STATE_BLACK;
+  }
+  for (let i = 0; i < 2; i++) {
+    this.board[8 + i][2] = constant.STATE_WHITE;
+    this.board[2 + i][9] = constant.STATE_BLACK;
   }
 };
 
