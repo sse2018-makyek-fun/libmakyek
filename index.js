@@ -4,7 +4,7 @@ const validation = require('./validation');
 const DIRECTIONS = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
 
 function MakyekBoard(onUpdate) {
-  this.size = 12;
+  this.size = 8;
   this.fnOnUpdate = onUpdate;
   this.clearBoard();
 }
@@ -22,27 +22,30 @@ MakyekBoard.prototype.clearBoard = function () {
     this.board.push(boardRow);
   }
 
-  for (let i = 0; i < 3; i++) {
-    this.board[2][2 + i] = constant.STATE_WHITE;
-    this.board[6][6 + i] = constant.STATE_WHITE;
-    this.board[5][3 + i] = constant.STATE_BLACK;
-    this.board[9][7 + i] = constant.STATE_BLACK;
+  for (let i = 1; i < 8; i+=2) {
+    this.board[0][i] = constant.STATE_WHITE;
+    this.board[2][i] = constant.STATE_WHITE;
+    this.board[6][i] = constant.STATE_BLACK;
   }
-  for (let i = 0; i < 2; i++) {
-    this.board[8 + i][2] = constant.STATE_WHITE;
-    this.board[2 + i][9] = constant.STATE_BLACK;
+  for (let i = 0; i < 8; i+=2) {
+    this.board[0][i] = constant.STATE_WHITE;
+    this.board[5][i] = constant.STATE_BLACK;
+    this.board[7][i] = constant.STATE_BLACK;
   }
 };
 
 /**
- * Check whether the position is in range of board.
+ * Check whether the position is in range of board and on valid positions.
  */
 MakyekBoard.prototype.inBound = function (x, y) {
-  return x >= 0 && x < this.size && y >= 0 && y < this.size;
+  return x >= 0 && x < this.size && y >= 0 && y < this.size && (x+y)%2;
 };
 
 /**
  * Check whether there is an available placement for a specific player.
+ * This function can be replaced by another function used to check the longest path of one side.
+ * If the longest path of one side is equal to 0, it means this side has no available move.
+ * Then the match ended
  */
 MakyekBoard.prototype.hasAvailablePlacement = function (side) {
   validation.checkPlayerSide(side);
@@ -65,19 +68,39 @@ MakyekBoard.prototype.hasAvailablePlacement = function (side) {
   return false;
 };
 
+MakyekBoard.prototype.moveForward = function (side, x0, y0, x1, y1) {
+  var isKing = (this.board[x0][y0] == side + constant.STATE_REVERSE);
+  if (isKing)
+    return true;
+  else {
+    if (side == constant.STATE_BLACK)
+      return (x0 > x1);
+    else
+      return (x1 > x0);
+  }
+};
+
 /**
  * Check whether a stone can be placed at a specified place.
  */
-MakyekBoard.prototype.canPlaceAt = function (side, x, y, option) {
-  validation.checkPlayerSide(side);
-
-  if (this.board[x][y] !== side) {
+MakyekBoard.prototype.canPlaceAt = function (side, x0, y0, x1, y1) {
+  if (this.board[x0][y0] !== side && this.board[x0][y0] !== side + constant.STATE_REVERSE) // The intended stone is invalid
+    return false;
+  
+  if (Math.abs(x0 - x1) == 1 && Math.abs(y0 - y1) == 1) {  // Take one single step
+    if(this.moveForward(side, x0, y0, x1, y1))
+      return (this.board[x1][y1] == constant.STATE_EMPTY);
     return false;
   }
-
-  const newX = x + DIRECTIONS[option][0];
-  const newY = y + DIRECTIONS[option][1];
-  return !(!this.inBound(newX, newY) || this.board[newX][newY] !== constant.STATE_EMPTY);
+  else if (Math.abs(x0 - x1) == 2 && Math.abs(y0 - y1) == 2) {  // Take one single step and remove the other player's stone
+    middleX = (x0 + x1) / 2;
+    middleY = (y0 + y1) / 2;
+    var theOtherSide = this.getOtherSide(side);
+    var middleStone = (this.board[middleX][middleY] == theOtherSide || this.board[middleX][middleY] == theOtherSide + constant.STATE_REVERSE);
+    return (middleStone && this.board[x1][y1] == constant.STATE_EMPTY);
+  }
+  else
+    return false;
 };
 
 MakyekBoard.prototype.getOtherSide = function (side) {
@@ -90,45 +113,29 @@ MakyekBoard.prototype.getOtherSide = function (side) {
  * The position must be validated via canPlaceAt before calling this function,
  * otherwise the behavior is unexpected.
  */
-MakyekBoard.prototype.placeAt = function (side, x, y, option) {
-  validation.checkPlayerSide(side);
+MakyekBoard.prototype.placeAt = function (side, x0, y0, x1, y1) {
+  // validation.checkPlayerSide(side);
 
-  const newX = x + DIRECTIONS[option][0];
-  const newY = y + DIRECTIONS[option][1];
-
-  this.board[x][y] = constant.STATE_EMPTY;
-  this.board[newX][newY] = side;
-
-  const otherSide = this.getOtherSide(side);
-
-  // Intervention
-  const interventionDir = [[1, 0], [0, 1], [1, 1], [1, -1]];
-  for (let i = 0; i < interventionDir.length; i++) {
-    const x1 = newX + interventionDir[i][0];
-    const y1 = newY + interventionDir[i][1];
-    const x2 = newX - interventionDir[i][0];
-    const y2 = newY - interventionDir[i][1];
-    if (this.inBound(x1, y1) && this.inBound(x2, y2) &&
-      this.board[x1][y1] === otherSide && this.board[x2][y2] === otherSide) {
-      this.board[x1][y1] = side;
-      this.board[x2][y2] = side;
-    }
+  if (Math.abs(x0 - x1) == 1 && Math.abs(y0 - y1) == 1) {  // Take one single step
+    this.board[x1][y1] = this.board[x0][y0];
+    this.board[x0][y0] = constant.STATE_EMPTY;
   }
 
-  // Custodian
-  const custodianDir = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
-  for (let i = 0; i < custodianDir.length; i++) {
-    const x1 = newX + custodianDir[i][0];
-    const y1 = newY + custodianDir[i][1];
-    const x2 = newX + (custodianDir[i][0] * 2);
-    const y2 = newY + (custodianDir[i][1] * 2);
-    if (this.inBound(x1, y1) && this.inBound(x2, y2) &&
-      this.board[x1][y1] === otherSide && this.board[x2][y2] === side) {
-      this.board[x1][y1] = side;
-    }
+  if (Math.abs(x0 - x1) == 2 && Math.abs(y0 - y1) == 2) {  // Take one single step and remove the other player's stone
+    middleX = (x0 + x1) / 2;
+    middleY = (y0 + y1) / 2;
+    this.board[x1][y1] = this.board[x0][y0];
+    this.board[x0][y0] = constant.STATE_EMPTY;
+    this.board[middleX][middleY] = constant.STATE_EMPTY;
   }
 
-  if (this.fnOnUpdate) {
+  // Update to the king
+  if (side == constant.STATE_WHITE && x1 == this.size - 1)
+    this.board[x1][y1] += constant.STATE_REVERSE;
+  else if (side == constant.STATE_BLACK && x1 == 0)
+    this.board[x1][y1] += constant.STATE_REVERSE;
+
+  if (this.fnOnUpdate) {  // ?
     this.fnOnUpdate(side, x, y, option);
   }
 };

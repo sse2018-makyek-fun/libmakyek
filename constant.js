@@ -3,6 +3,8 @@ module.exports = {
   STATE_BLACK: 1,
   STATE_WHITE: 2,
   STATE_REVERSE: 3,     // Not a real state
+  STATE_BLACK_KING: 4,
+  STATE_WHITE_KING: 5,
   OPTION_UP: 0,
   OPTION_DOWN: 1,
   OPTION_LEFT: 2,
