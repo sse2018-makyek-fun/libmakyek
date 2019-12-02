@@ -28,7 +28,7 @@ MakyekBoard.prototype.clearBoard = function () {
     this.board[6][i] = constant.STATE_BLACK;
   }
   for (let i = 0; i < 8; i+=2) {
-    this.board[0][i] = constant.STATE_WHITE;
+    this.board[1][i] = constant.STATE_WHITE;
     this.board[5][i] = constant.STATE_BLACK;
     this.board[7][i] = constant.STATE_BLACK;
   }
