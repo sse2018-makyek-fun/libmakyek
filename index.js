@@ -88,7 +88,7 @@ MakyekBoard.prototype.canPlaceAt = function (side, x0, y0, x1, y1) {
   x1 = parseInt(x1);
   y0 = parseInt(y0);
   yi = parseInt(y1);
-  
+
   if (this.board[x0][y0] !== side && this.board[x0][y0] !== side + constant.STATE_REVERSE) // The intended stone is invalid
     return false;
   
@@ -133,6 +133,9 @@ MakyekBoard.prototype.placeAt = function (side, x0, y0, x1, y1) {
   if (Math.abs(x0 - x1) == 2 && Math.abs(y0 - y1) == 2) {  // Take one single step and remove the other player's stone
     var middleX = parseInt((x0 + x1) / 2);
     var middleY = parseInt((y0 + y1) / 2);
+    console.log('middle');
+    console.log(middleX);
+    console.log(middleY);
     this.board[x1][y1] = this.board[x0][y0];
     this.board[x0][y0] = constant.STATE_EMPTY;
     this.board[middleX][middleY] = constant.STATE_EMPTY;
