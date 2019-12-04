@@ -43,24 +43,35 @@ MakyekBoard.prototype.inBound = function (x, y) {
 
 /**
  * Check whether there is an available placement for a specific player.
- * This function can be replaced by another function used to check the longest path of one side.
- * If the longest path of one side is equal to 0, it means this side has no available move.
- * Then the match ended
+ * This function only checks pure movement, excluding moving opposite stones
  */
 MakyekBoard.prototype.hasAvailablePlacement = function (side) {
   validation.checkPlayerSide(side);
 
-  for (let i = 0; i < 8; i++) {
-    for (let x = 0; x < this.size; x++) {
-      for (let y = 0; y < this.size; y++) {
-        if (this.board[x][y] !== side) {
-          continue;
-        }
-        const newX = x + DIRECTIONS[i][0];
-        const newY = y + DIRECTIONS[i][1];
-        if (this.inBound(newX, newY) && this.board[newX][newY] === constant.STATE_EMPTY) {
+  for (let x = 0; x < this.size; x++) {
+    for (let y = 0; y < this.size; y++) {
+      if (this.board[x][y] !== side && this.board[x][y] < constant.STATE_REVERSE) {
+        continue;
+      }
+      if (this.board[x][y] == side && side == constant.STATE_BLACK) {
+        if ((this.inBound(x - 1, y - 1) && this.board[x - 1][y - 1] == constant.STATE_EMPTY) || 
+          (this.inBound(x - 1, y + 1) && this.board[x - 1][y + 1] == constant.STATE_EMPTY)) {
           return true;
         }
+      }
+      if (this.board[x][y] == side && side == constant.STATE_WHITE) {
+        if ((this.inBound(x + 1, y - 1) && this.board[x + 1][y - 1] == constant.STATE_EMPTY) || 
+          (this.inBound(x + 1, y + 1) && this.board[x + 1][y + 1] == constant.STATE_EMPTY)) {
+          return true;
+          }
+      }
+      if (this.board[x][y] == side + constant.STATE_REVERSE) {
+        if ((this.inBound(x + 1, y - 1) && this.board[x + 1][y - 1] == constant.STATE_EMPTY) || 
+          (this.inBound(x + 1, y + 1) && this.board[x + 1][y + 1] == constant.STATE_EMPTY) ||
+          (this.inBound(x - 1, y - 1) && this.board[x - 1][y - 1] == constant.STATE_EMPTY) || 
+          (this.inBound(x - 1, y + 1) && this.board[x - 1][y + 1] == constant.STATE_EMPTY)) {
+          return true;
+          }
       }
     }
   }
@@ -133,9 +144,6 @@ MakyekBoard.prototype.placeAt = function (side, x0, y0, x1, y1) {
   if (Math.abs(x0 - x1) == 2 && Math.abs(y0 - y1) == 2) {  // Take one single step and remove the other player's stone
     var middleX = parseInt((x0 + x1) / 2);
     var middleY = parseInt((y0 + y1) / 2);
-    console.log('middle');
-    console.log(middleX);
-    console.log(middleY);
     this.board[x1][y1] = this.board[x0][y0];
     this.board[x0][y0] = constant.STATE_EMPTY;
     this.board[middleX][middleY] = constant.STATE_EMPTY;
