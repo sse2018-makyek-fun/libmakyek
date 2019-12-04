@@ -170,7 +170,14 @@ MakyekBoard.prototype.count = function () {
   analytics[constant.STATE_WHITE] = 0;
   for (let i = 0; i < this.size; i++) {
     for (let j = 0; j < this.size; j++) {
-      analytics[parseInt(this.board[i][j], 10)]++;
+      if (this.board[i][j] == constant.STATE_BLACK)
+        analytics[constant.STATE_BLACK]++;
+      if (this.board[i][j] == constant.STATE_WHITE)
+        analytics[constant.STATE_WHITE]++;
+      if (this.board[i][j] == constant.STATE_BLACK_KING)
+        analytics[constant.STATE_BLACK] += 3;
+      if (this.board[i][j] == constant.STATE_WHITE_KING)
+        analytics[constant.STATE_WHITE] += 3;
     }
   }
   return analytics;
