@@ -87,7 +87,7 @@ MakyekBoard.prototype.canPlaceAt = function (side, x0, y0, x1, y1) {
   x0 = parseInt(x0);
   x1 = parseInt(x1);
   y0 = parseInt(y0);
-  yi = parseInt(y1);
+  y1 = parseInt(y1);
 
   if (this.board[x0][y0] !== side && this.board[x0][y0] !== side + constant.STATE_REVERSE) // The intended stone is invalid
     return false;
