@@ -142,9 +142,9 @@ MakyekBoard.prototype.placeAt = function (side, x0, y0, x1, y1) {
   }
 
   // Update to the king
-  if (side == constant.STATE_WHITE && x1 == this.size - 1)
+  if (side == constant.STATE_WHITE && x1 == this.size - 1 && this.board[x1][y1] < constant.STATE_REVERSE)
     this.board[x1][y1] += constant.STATE_REVERSE;
-  else if (side == constant.STATE_BLACK && x1 == 0)
+  else if (side == constant.STATE_BLACK && x1 == 0 && this.board[x1][y1] < constant.STATE_REVERSE)
     this.board[x1][y1] += constant.STATE_REVERSE;
 
   if (this.fnOnUpdate) {  // ?
