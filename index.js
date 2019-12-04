@@ -123,7 +123,7 @@ MakyekBoard.prototype.placeAt = function (side, x0, y0, x1, y1) {
   x0 = parseInt(x0);
   x1 = parseInt(x1);
   y0 = parseInt(y0);
-  yi = parseInt(y1);
+  y1 = parseInt(y1);
 
   if (Math.abs(x0 - x1) == 1 && Math.abs(y0 - y1) == 1) {  // Take one single step
     this.board[x1][y1] = this.board[x0][y0];
