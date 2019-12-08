@@ -129,7 +129,7 @@ MakyekBoard.prototype.getOtherSide = function (side) {
  * The position must be validated via canPlaceAt before calling this function,
  * otherwise the behavior is unexpected.
  */
-MakyekBoard.prototype.placeAt = function (side, x0, y0, x1, y1) {
+MakyekBoard.prototype.placeAt = function (side, x0, y0, x1, y1, isLastStep) {
   // validation.checkPlayerSide(side);
   x0 = parseInt(x0);
   x1 = parseInt(x1);
@@ -150,9 +150,9 @@ MakyekBoard.prototype.placeAt = function (side, x0, y0, x1, y1) {
   }
 
   // Update to the king
-  if (side == constant.STATE_WHITE && x1 == this.size - 1 && this.board[x1][y1] < constant.STATE_REVERSE)
+  if (isLastStep && side == constant.STATE_WHITE && x1 == this.size - 1 && this.board[x1][y1] < constant.STATE_REVERSE)
     this.board[x1][y1] += constant.STATE_REVERSE;
-  else if (side == constant.STATE_BLACK && x1 == 0 && this.board[x1][y1] < constant.STATE_REVERSE)
+  else if (isLastStep && side == constant.STATE_BLACK && x1 == 0 && this.board[x1][y1] < constant.STATE_REVERSE)
     this.board[x1][y1] += constant.STATE_REVERSE;
 
   if (this.fnOnUpdate) {  // ?
